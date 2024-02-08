@@ -17,6 +17,8 @@ side_attack_sound=pygame.mixer.Sound("data/side_attack_sound.mp3")
 thunder_attack_sound=pygame.mixer.Sound("data/thunder_attack_sound.mp3")
 circle_warn_sound=pygame.mixer.Sound("data/circle_warn_sound.mp3")
 circle_attack_sound=pygame.mixer.Sound("data/circle_attack_sound.mp3")
+boss_death_sound=pygame.mixer.Sound("data/boss_death_sound.mp3")
+explosion_sound=pygame.mixer.Sound("data/explosion_sound.mp3")
 pygame.mixer.Sound.set_volume(laser_sound,0.2)
 
 class Game:
@@ -60,6 +62,9 @@ class Game:
 
         self.circle_warn=pygame.transform.rotate(self.circle_warn,90)
         self.circle_warn=pygame.transform.scale(self.circle_warn,(200,200))
+
+        self.explosion=pygame.image.load("data/boss_death.png")
+        self.explosion=pygame.transform.scale(self.explosion,(500,500))
 
         self.text_play=self.my_font.render("Ready?", False, (0, 0, 0))
         self.text_play=pygame.transform.scale(self.text_play,(300,150))
@@ -162,7 +167,7 @@ class Game:
 
         self.intro_thunder_sound_flag=True
 
-        self.hp=200000
+        self.hp=25000
 
         self.roar_flag=True
 
@@ -177,6 +182,12 @@ class Game:
         self.into_side_flag=True
 
         self.into_circle_flag=True
+
+        self.end=False
+
+        self.victory=False
+
+        self.end_time=0
 
         self.col_left=pygame.rect.Rect(0,0,0,0)
         self.col_right=pygame.rect.Rect(0,0,0,0)
@@ -802,7 +813,7 @@ class Game:
 
                             self.intro_thunder_sound_flag=True
 
-                            self.hp=200000
+                            self.hp=25000
 
                             self.roar_flag=True
 
@@ -817,6 +828,12 @@ class Game:
                             self.into_side_flag=True
 
                             self.into_circle_flag=True
+
+                            self.end=False
+
+                            self.victory=False
+
+                            self.end_time=0
 
                             self.col_left=pygame.rect.Rect(0,0,0,0)
                             self.col_right=pygame.rect.Rect(0,0,0,0)
@@ -1037,18 +1054,82 @@ class Game:
                     self.into_thunder_flag=True
                     self.choise_flag=False
                 
-
                 if self.choise==1:
                     self.curent_attack="thunder"
+
+                    self.up_c=pygame.rect.Rect(0,0,0,0)
+
+                    self.side_left_c=pygame.rect.Rect(0,0,0,0)
+                    self.side_right_c=pygame.rect.Rect(0,0,0,0)
+
                     self.choise_flag,self.col_left,self.col_right,self.col_mid=self.thunder_attack()
 
                 if self.choise==2:
                     self.curent_attack="side"
+
+                    self.up_c=pygame.rect.Rect(0,0,0,0)
+
+                    self.col_left=pygame.rect.Rect(0,0,0,0)
+                    self.col_right=pygame.rect.Rect(0,0,0,0)
+                    self.col_mid=pygame.rect.Rect(0,0,0,0)
+
                     self.choise_flag,self.light_left_c,self.light_right_c=self.side_attack()
 
                 if self.choise==3:
                     self.curent_attack="circle"
+
+                    self.side_left_c=pygame.rect.Rect(0,0,0,0)
+                    self.side_right_c=pygame.rect.Rect(0,0,0,0)
+
+                    self.col_left=pygame.rect.Rect(0,0,0,0)
+                    self.col_right=pygame.rect.Rect(0,0,0,0)
+                    self.col_mid=pygame.rect.Rect(0,0,0,0)
+
                     self.choise_flag,self.up_c1,self.up_c2,self.up_c3=self.circle_attack()
+
+            if self.victory:
+                self.end=True
+
+            self.health_bar=pygame.rect.Rect(250,0,self.hp/25.0,10)
+            pygame.draw.rect(self.screen,(255,0,0),self.health_bar)
+
+            self.death_sound_flag=True
+            while self.end:
+                if self.death_sound_flag:
+                    pygame.mixer.Channel(2).stop()
+                    pygame.mixer.Channel(2).play(pygame.mixer.Sound(boss_death_sound))
+                    pygame.mixer.Channel(4).stop()
+                    pygame.mixer.Channel(4).play(pygame.mixer.Sound(explosion_sound))
+                    self.death_sound_flag=False
+
+                self.screen.fill((0,0,0))
+                self.screen.blit(self.bg,(0,0)) 
+
+                self.player_pos=[700,600]
+                self.player_movement=[0,0,0,0]
+
+                self.screen.blit(self.player,self.player_pos)
+
+                self.screen.blit(self.boss_part_left,(200,0))
+                self.screen.blit(self.boss_part_right,(700,0))
+                self.screen.blit(self.boss_part_mid,(450,-100))
+
+                self.explosion_x=random.randint(200,600)
+                self.screen.blit(self.explosion,(self.explosion_x,0))
+
+                for event in pygame.event.get():
+                    if event.type==pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+
+                if self.end_time>=360:
+                    pygame.quit()
+                    sys.exit()
+
+                self.end_time+=1
+
+                pygame.display.update()
+                self.clock.tick(60)
 
             if pygame.rect.Rect.colliderect(self.collision_player,self.collision_up):
                 self.player_movement[0]=0
