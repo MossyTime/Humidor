@@ -4,19 +4,20 @@ import random
 import math
 
 pygame.mixer.init()
-pygame.mixer_music.load("Humidor/data/tittle_music.mp3")
+pygame.mixer_music.load("data/tittle_music.mp3")
 pygame.mixer_music.play(-1)
-laser_sound=pygame.mixer.Sound("Humidor/data/laser_sound.mp3")
-whoosh_sound=pygame.mixer.Sound("Humidor/data/boss_flyby.mp3")
-teleport=pygame.mixer.Sound("Humidor/data/teleport.mp3")
-intro_thunder=pygame.mixer.Sound("Humidor/data/intro_thunder.mp3")
-boss_roar=pygame.mixer.Sound("Humidor/data/boss_roar.mp3")
-thunder_warn=pygame.mixer.Sound("Humidor/data/thunder_warn.mp3")
-side_warn_sound=pygame.mixer.Sound("Humidor/data/side_warn_sound.mp3")
-side_attack_sound=pygame.mixer.Sound("Humidor/data/side_attack_sound.mp3")
-thunder_attack_sound=pygame.mixer.Sound("Humidor/data/thunder_attack_sound.mp3")
+laser_sound=pygame.mixer.Sound("data/laser_sound.mp3")
+whoosh_sound=pygame.mixer.Sound("data/boss_flyby.mp3")
+teleport=pygame.mixer.Sound("data/teleport.mp3")
+intro_thunder=pygame.mixer.Sound("data/intro_thunder.mp3")
+boss_roar=pygame.mixer.Sound("data/boss_roar.mp3")
+thunder_warn=pygame.mixer.Sound("data/thunder_warn.mp3")
+side_warn_sound=pygame.mixer.Sound("data/side_warn_sound.mp3")
+side_attack_sound=pygame.mixer.Sound("data/side_attack_sound.mp3")
+thunder_attack_sound=pygame.mixer.Sound("data/thunder_attack_sound.mp3")
+circle_warn_sound=pygame.mixer.Sound("data/circle_warn_sound.mp3")
+circle_attack_sound=pygame.mixer.Sound("data/circle_attack_sound.mp3")
 pygame.mixer.Sound.set_volume(laser_sound,0.2)
-print("a")
 
 class Game:
     def __init__(self):
@@ -25,12 +26,12 @@ class Game:
         pygame.display.set_caption("Humidor")
         self.screen=pygame.display.set_mode((1500,700))
         self.clock=pygame.time.Clock()
-        self.bg=pygame.image.load("Humidor/data/background.png")
+        self.bg=pygame.image.load("data/background.png")
         self.bg=pygame.transform.scale(self.bg,(1500,700))
-        self.tittle_screen=pygame.image.load("Humidor/data/tittle_screen.png")
+        self.tittle_screen=pygame.image.load("data/tittle_screen.png")
         self.tittle_screen=pygame.transform.scale(self.tittle_screen,(1500,700))
 
-        self.retry_screen=pygame.image.load("Humidor/data/tittle_screen.png")
+        self.retry_screen=pygame.image.load("data/tittle_screen.png")
         self.retry_screen=pygame.transform.scale(self.retry_screen,(1500,700))
 
         self.my_font = pygame.font.SysFont('malgungothic', 500,False,True)
@@ -49,37 +50,45 @@ class Game:
         self.text_retry_button=self.my_font.render("Retry", False, (100, 0, 255))
         self.text_retry_button=pygame.transform.scale(self.text_retry_button,(300,150))
 
-        self.circle_lightning=pygame.image.load("Humidor/data/circle_lightning.png")
-        self.circle_lightning=pygame.transform.rotate(self.circle_lightning,90)
+        self.circle_lightning=pygame.image.load("data/circle_lightning.png")
+
+        self.circle_lightning1=pygame.transform.scale(self.circle_lightning,(100,100))
+        self.circle_lightning2=pygame.transform.scale(self.circle_lightning,(100,100))
+        self.circle_lightning3=pygame.transform.scale(self.circle_lightning,(100,100))
+
+        self.circle_warn=pygame.image.load("data/circle_warn.png")
+
+        self.circle_warn=pygame.transform.rotate(self.circle_warn,90)
+        self.circle_warn=pygame.transform.scale(self.circle_warn,(200,200))
 
         self.text_play=self.my_font.render("Ready?", False, (0, 0, 0))
         self.text_play=pygame.transform.scale(self.text_play,(300,150))
         
-        self.player=pygame.image.load("Humidor/data/sun.png")
+        self.player=pygame.image.load("data/sun.png")
         self.player=pygame.transform.scale(self.player,(100,100))
 
-        self.laser=pygame.image.load("Humidor/data/laser_beam.png")
+        self.laser=pygame.image.load("data/laser_beam.png")
         self.laser=pygame.transform.scale(self.laser,(1600,70))
 
-        self.roar_lines=pygame.image.load("Humidor/data/roar_lines.png")
+        self.roar_lines=pygame.image.load("data/roar_lines.png")
         self.roar_lines=pygame.transform.scale(self.roar_lines,(1500,700))
 
-        self.thunder_warn_shine=pygame.image.load("Humidor/data/thunder_warn_shine.png")
+        self.thunder_warn_shine=pygame.image.load("data/thunder_warn_shine.png")
         self.thunder_warn_shine=pygame.transform.scale(self.thunder_warn_shine,(300,300))
 
-        self.side_warn=pygame.image.load("Humidor/data/side_warn.png")
+        self.side_warn=pygame.image.load("data/side_warn.png")
         self.side_warn=pygame.transform.scale(self.side_warn,(300,300))
 
         self.side_warn_left=pygame.transform.rotate(self.side_warn,270)
         self.side_warn_right=pygame.transform.rotate(self.side_warn,90)
 
-        self.side_lightning=pygame.image.load("Humidor/data/side_lightning.png")
+        self.side_lightning=pygame.image.load("data/side_lightning.png")
         self.side_lightning=pygame.transform.scale(self.side_lightning,(600,100))
 
-        self.side_attack_light=pygame.image.load("Humidor/data/side_attack.png")
+        self.side_attack_light=pygame.image.load("data/side_attack.png")
         self.side_attack_light=pygame.transform.scale(self.side_attack_light,(1500,100))
 
-        self.vertical_tp=pygame.image.load("Humidor/data/side_lightning.png")
+        self.vertical_tp=pygame.image.load("data/side_lightning.png")
         self.vertical_tp=pygame.transform.rotate(self.vertical_tp,90)
         self.vertical_tp=pygame.transform.scale(self.vertical_tp,(200,700))
 
@@ -89,30 +98,32 @@ class Game:
         self.right_warn=pygame.transform.rotate(self.side_warn,270)
         self.right_warn=pygame.transform.scale(self.right_warn,(200,200))
 
-        self.ball=pygame.image.load("Humidor/data/ball.png")
+        self.ball=pygame.image.load("data/ball.png")
         self.ball=pygame.transform.scale(self.ball,(150,150))
 
-        self.shine=pygame.image.load("Humidor/data/shine.png")
+        self.shine=pygame.image.load("data/shine.png")
         self.shine=pygame.transform.scale(self.shine,(150,150))
 
-        self.thunder_lightning=pygame.image.load("Humidor/data/thunder_attack.png")
+        self.thunder_lightning=pygame.image.load("data/thunder_attack.png")
         self.thunder_lightning=pygame.transform.scale(self.thunder_lightning,(500,700))
 
-        self.boss_part=pygame.image.load("Humidor/data/cloud_part.png")
+        self.boss_part=pygame.image.load("data/cloud_part.png")
         self.boss_part_left=pygame.transform.scale(self.boss_part,(500,500))
         self.boss_part_mid=pygame.transform.scale(self.boss_part,(500,500))
         self.boss_part_right=pygame.transform.scale(self.boss_part,(500,500))
 
-        self.logo_sun=pygame.image.load("Humidor/data/logo_sun.png")
+        self.logo_sun=pygame.image.load("data/logo_sun.png")
         self.logo_sun=pygame.transform.scale(self.logo_sun,(1500,700))
 
-        self.logo_cloud=pygame.image.load("Humidor/data/logo_cloud.png")
+        self.logo_cloud=pygame.image.load("data/logo_cloud.png")
         self.logo_cloud=pygame.transform.scale(self.logo_cloud,(600,200))
 
-        self.boss_side=pygame.image.load("Humidor/data/side_cloud.png")
+        self.boss_side=pygame.image.load("data/side_cloud.png")
 
         self.boss_left=pygame.transform.rotate(self.boss_side,90)
         self.boss_left=pygame.transform.scale(self.boss_left,(300,700))
+
+        self.boss_up=pygame.transform.scale(self.boss_side,(1500,200))
 
         self.boss_right=pygame.transform.rotate(self.boss_side,270)
         self.boss_right=pygame.transform.scale(self.boss_right,(300,700))
@@ -165,15 +176,25 @@ class Game:
 
         self.into_side_flag=True
 
+        self.into_circle_flag=True
+
         self.col_left=pygame.rect.Rect(0,0,0,0)
         self.col_right=pygame.rect.Rect(0,0,0,0)
         self.col_mid=pygame.rect.Rect(0,0,0,0)
 
+        self.up_c=pygame.rect.Rect(0,0,0,0)
+
         self.side_left_c=pygame.rect.Rect(0,0,0,0)
         self.side_right_c=pygame.rect.Rect(0,0,0,0)
 
+        self.up_c1=pygame.rect.Rect(0,0,0,0)
+        self.up_c2=pygame.rect.Rect(0,0,0,0)
+        self.up_c3=pygame.rect.Rect(0,0,0,0)
+
         self.light_left_c=pygame.rect.Rect(0,0,0,0)
         self.light_right_c=pygame.rect.Rect(0,0,0,0)
+
+        self.circle_c=pygame.rect.Rect(0,0,0,0)
         
         self.t1=pygame.rect.Rect(0,0,0,0)
         self.t2=pygame.rect.Rect(0,0,0,0)
@@ -563,6 +584,112 @@ class Game:
 
         return self.choise_flag,self.light_left_c,self.light_right_c
 
+    def circle_attack(self):
+        if self.into_circle_flag:
+            self.side_lightning=pygame.transform.scale(self.side_lightning,(1500,200))
+            self.circle_time=0
+            self.circle_timer=0
+            self.into_circle_flag=False
+            self.circle_sound_flag=True
+            self.circle_n1=0
+            self.circle_n2=0
+            self.circle_n3=0
+
+        if self.circle_time<=10:
+
+            self.screen.blit(self.side_lightning,(0,0))
+            self.screen.blit(self.side_lightning,(0,100))
+            self.screen.blit(self.side_lightning,(0,-100))
+
+        if self.circle_time>10 and self.circle_time<=330:
+
+            self.screen.blit(self.boss_up,(0,-100))
+            self.up_c=pygame.rect.Rect(0,-100,1500,200)
+
+            if self.circle_timer==80:
+                self.circle_timer=0
+                self.circle_n1=0
+                self.circle_n2=0
+                self.circle_n3=0
+
+            if self.circle_timer==0 or self.circle_timer==30 or self.circle_timer==60:
+                if self.circle_timer==0:
+                    self.circle_x1=random.randint(0,1500)
+                    self.circle_x2=random.randint(0,1500)
+                    self.circle_x3=random.randint(0,1500)
+                self.circle_sound_flag=True
+
+            if self.circle_timer>=0 and self.circle_timer<30:
+                
+                self.cr1=pygame.rect.Rect(self.circle_x1,0,50,700)
+                pygame.draw.rect(self.screen,(0,150,150),self.cr1)
+                #self.screen.blit(self.circle_warn,(self.circle_x1-100,50))
+
+            if self.circle_timer>=30 and self.circle_timer<60:
+
+                if self.circle_sound_flag:
+                    pygame.mixer.Channel(4).stop
+                    pygame.mixer.Channel(4).play(pygame.mixer.Sound(circle_attack_sound))
+                    self.circle_sound_flag=False
+
+                self.screen.blit(self.circle_lightning1,(self.circle_x1-50,self.circle_n1))
+                self.up_c1=pygame.rect.Rect(self.circle_x1-50,self.circle_n1,100,100)
+
+                self.cr2=pygame.rect.Rect(self.circle_x2,0,50,700)
+                pygame.draw.rect(self.screen,(0,150,150),self.cr2)
+
+                #self.screen.blit(self.circle_warn,(self.circle_x2-100,50))
+
+                self.circle_n1+=50
+
+            if self.circle_timer>=60 and self.circle_timer<90:
+
+                if self.circle_sound_flag:
+                    pygame.mixer.Channel(4).stop
+                    pygame.mixer.Channel(4).play(pygame.mixer.Sound(circle_attack_sound))
+                    self.circle_sound_flag=False
+
+                self.screen.blit(self.circle_lightning2,(self.circle_x2-50,self.circle_n2))
+                self.up_c2=pygame.rect.Rect(self.circle_x2-50,self.circle_n2,100,100)
+
+                self.cr3=pygame.rect.Rect(self.circle_x3,0,50,700)
+                pygame.draw.rect(self.screen,(0,150,150),self.cr3)
+
+                #self.screen.blit(self.circle_warn,(self.circle_x3-100,50))
+
+                self.circle_n2+=50
+
+            if self.circle_timer>=90 and self.circle_timer<120:
+
+                if self.circle_sound_flag:
+                    pygame.mixer.Channel(4).stop
+                    pygame.mixer.Channel(4).play(pygame.mixer.Sound(circle_attack_sound))
+                    self.circle_sound_flag=False
+
+                self.screen.blit(self.circle_lightning3,(self.circle_x3-50,self.circle_n3))
+                self.up_c3=pygame.rect.Rect(self.circle_x3-50,self.circle_n3,100,100)
+
+
+                self.circle_n3+=50
+
+            
+
+            self.circle_timer+=1
+            
+
+        if self.circle_time>480 and self.circle_time<490:
+            self.screen.blit(self.side_lightning,(0,0))
+            self.screen.blit(self.side_lightning,(0,100))
+            self.screen.blit(self.side_lightning,(0,200))
+
+        if self.circle_time>=490:
+            self.choise_flag=True
+            self.into_circle_flag=True
+            self.circle_timer_flag=True
+
+        self.circle_time+=1
+
+        return self.choise_flag,self.up_c1,self.up_c2,self.up_c3
 
 
     def run(self):
@@ -613,7 +740,7 @@ class Game:
                 if self.retry_music_flag:
 
                     pygame.mixer_music.stop()
-                    pygame.mixer_music.load("Humidor/data/retry_music.mp3")
+                    pygame.mixer_music.load("data/retry_music.mp3")
                     pygame.mixer.music.play(-1)
                     self.retry_music_flag=False
 
@@ -689,15 +816,25 @@ class Game:
 
                             self.into_side_flag=True
 
+                            self.into_circle_flag=True
+
                             self.col_left=pygame.rect.Rect(0,0,0,0)
                             self.col_right=pygame.rect.Rect(0,0,0,0)
                             self.col_mid=pygame.rect.Rect(0,0,0,0)
+
+                            self.up_c=pygame.rect.Rect(0,0,0,0)
 
                             self.side_left_c=pygame.rect.Rect(0,0,0,0)
                             self.side_right_c=pygame.rect.Rect(0,0,0,0)
 
                             self.light_left_c=pygame.rect.Rect(0,0,0,0)
                             self.light_right_c=pygame.rect.Rect(0,0,0,0)
+
+                            self.circle_c=pygame.rect.Rect(0,0,0,0)
+
+                            self.up_c1=pygame.rect.Rect(0,0,0,0)
+                            self.up_c2=pygame.rect.Rect(0,0,0,0)
+                            self.up_c3=pygame.rect.Rect(0,0,0,0)
                             
                             self.t1=pygame.rect.Rect(0,0,0,0)
                             self.t2=pygame.rect.Rect(0,0,0,0)
@@ -714,7 +851,7 @@ class Game:
 
                 if self.entrance_sounds:
                     pygame.mixer.Sound.play(whoosh_sound)
-                    pygame.mixer_music.load("Humidor/data/boss_entrance.mp3")
+                    pygame.mixer_music.load("data/boss_entrance.mp3")
                     pygame.mixer_music.play()
                     self.entrance_sounds=False
 
@@ -880,8 +1017,8 @@ class Game:
 
             if self.boss_music_flag:
 
-                pygame.mixer_music.load("Humidor/data/boss_music.mp3")
-                pygame.mixer_music.set_volume(0.2)
+                pygame.mixer_music.load("data/boss_music.mp3")
+                pygame.mixer_music.set_volume(0.5)
                 pygame.mixer_music.play(-1)
                 self.boss_music_flag=False
 
@@ -896,7 +1033,7 @@ class Game:
 
             if self.attack_chose:
                 if self.choise_flag:
-                    self.choise=random.randint(3,3)
+                    self.choise=random.randint(1,3)
                     self.into_thunder_flag=True
                     self.choise_flag=False
                 
@@ -911,7 +1048,7 @@ class Game:
 
                 if self.choise==3:
                     self.curent_attack="circle"
-                    self.circle_attack()
+                    self.choise_flag,self.up_c1,self.up_c2,self.up_c3=self.circle_attack()
 
             if pygame.rect.Rect.colliderect(self.collision_player,self.collision_up):
                 self.player_movement[0]=0
@@ -939,6 +1076,15 @@ class Game:
                 self.retry=True
 
             if pygame.rect.Rect.colliderect(self.collision_player,self.light_right_c):
+                self.retry=True
+
+            if pygame.rect.Rect.colliderect(self.collision_player,self.up_c1):
+                self.retry=True
+
+            if pygame.rect.Rect.colliderect(self.collision_player,self.up_c2):
+                self.retry=True
+
+            if pygame.rect.Rect.colliderect(self.collision_player,self.up_c3):
                 self.retry=True
 
             self.player_pos[0]+=self.player_movement[2]
@@ -990,10 +1136,12 @@ class Game:
                         self.hp-=1
                     if pygame.Rect.colliderect(self.col_rot_laser,self.col_mid):
                         self.hp-=1
-                    # if pygame.Rect.colliderect(self.col_rot_laser,self.col_side_left):
-                    #     self.hp-=1
-                    # if pygame.Rect.colliderect(self.col_rot_laser,self.col_side_left):
-                    #     self.hp-=1
+                    if pygame.Rect.colliderect(self.col_rot_laser,self.side_right_c):
+                        self.hp-=1
+                    if pygame.Rect.colliderect(self.col_rot_laser,self.side_left_c):
+                        self.hp-=1
+                    if pygame.Rect.colliderect(self.col_rot_laser,self.up_c):
+                        self.hp-=1
 
             for event in pygame.event.get():
                 if event.type==pygame.QUIT:
