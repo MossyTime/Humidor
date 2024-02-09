@@ -33,7 +33,7 @@ class Game:
         self.tittle_screen=pygame.image.load("data/tittle_screen.png")
         self.tittle_screen=pygame.transform.scale(self.tittle_screen,(1500,700))
 
-        self.retry_screen=pygame.image.load("data/tittle_screen.png")
+        self.retry_screen=pygame.image.load("data/retry_screen.png")
         self.retry_screen=pygame.transform.scale(self.retry_screen,(1500,700))
 
         self.my_font = pygame.font.SysFont('malgungothic', 500,False,True)
